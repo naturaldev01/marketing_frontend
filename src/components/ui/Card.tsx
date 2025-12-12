@@ -28,7 +28,7 @@ export function CardHeader({ children, className = '' }: { children: React.React
   );
 }
 
-export function CardContent({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+export function CardContent({ children, className = '' }: { children?: React.ReactNode; className?: string }) {
   return (
     <div className={`px-6 py-4 ${className}`}>
       {children}
