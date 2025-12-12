@@ -11,7 +11,6 @@ import Input from '@/components/ui/Input';
 import { csvFilesApi } from '@/lib/api';
 import type { CsvFile, FilterOptions } from '@/types';
 import {
-  Plus,
   Search,
   Upload,
   FileSpreadsheet,
@@ -50,7 +49,7 @@ export default function CsvFilesPage() {
     try {
       const data = await csvFilesApi.getAll();
       setFiles(data);
-    } catch (error) {
+    } catch {
       toast.error('CSV dosyaları yüklenemedi');
     } finally {
       setLoading(false);
@@ -64,7 +63,7 @@ export default function CsvFilesPage() {
       await csvFilesApi.delete(id);
       toast.success('Dosya silindi');
       loadFiles();
-    } catch (error) {
+    } catch {
       toast.error('Dosya silinemedi');
     }
   };
@@ -174,18 +173,18 @@ export default function CsvFilesPage() {
                             {(file.filter_criteria.countries?.length ?? 0) > 0 && (
                               <div className="flex items-center gap-1">
                                 <Globe className="w-3 h-3" />
-                                <span>Ülkeler: {file.filter_criteria.countries.join(', ')}</span>
+                                <span>Ülkeler: {file.filter_criteria.countries?.join(', ')}</span>
                               </div>
                             )}
                             {(file.filter_criteria.timezones?.length ?? 0) > 0 && (
                               <div className="flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
-                                <span>Zaman Dilimleri: {file.filter_criteria.timezones.length} seçili</span>
+                                <span>Zaman Dilimleri: {file.filter_criteria.timezones?.length} seçili</span>
                               </div>
                             )}
                             {(file.filter_criteria.emailDomains?.length ?? 0) > 0 && (
                               <div className="flex items-center gap-1">
-                                <span>E-posta: @{file.filter_criteria.emailDomains.slice(0, 2).join(', @')}{file.filter_criteria.emailDomains.length > 2 ? '...' : ''}</span>
+                                <span>E-posta: @{file.filter_criteria.emailDomains?.slice(0, 2).join(', @')}{(file.filter_criteria.emailDomains?.length ?? 0) > 2 ? '...' : ''}</span>
                               </div>
                             )}
                           </div>
@@ -319,7 +318,7 @@ function UploadModal({
       onSuccess();
       setFile(null);
       setName('');
-    } catch (error) {
+    } catch {
       toast.error('Dosya yüklenemedi');
     } finally {
       setLoading(false);
@@ -415,20 +414,20 @@ function FilterModal({
   const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
   const [filterName, setFilterName] = useState('');
 
+  const loadFilterOptions = useCallback(async () => {
+    try {
+      const options = await csvFilesApi.getFilterOptions(file.id);
+      setFilterOptions(options);
+    } catch {
+      toast.error('Filtre seçenekleri yüklenemedi');
+    }
+  }, [file.id]);
+
   useEffect(() => {
     if (isOpen) {
       loadFilterOptions();
     }
-  }, [isOpen]);
-
-  const loadFilterOptions = async () => {
-    try {
-      const options = await csvFilesApi.getFilterOptions(file.id);
-      setFilterOptions(options);
-    } catch (error) {
-      toast.error('Filtre seçenekleri yüklenemedi');
-    }
-  };
+  }, [isOpen, loadFilterOptions]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -537,7 +536,7 @@ function FilterModal({
             {filterOptions.emailDomains.length > 0 && (
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  E-posta Domain'leri ({selectedDomains.length} seçili)
+                  E-posta Domain&apos;leri ({selectedDomains.length} seçili)
                 </label>
                 <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-3 bg-slate-800/30 rounded-lg border border-slate-700/30">
                   {filterOptions.emailDomains.slice(0, 50).map((domain) => (

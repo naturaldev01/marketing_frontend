@@ -38,7 +38,7 @@ export default function TemplatesPage() {
     try {
       const data = await templatesApi.getAll();
       setTemplates(data);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load templates');
     } finally {
       setLoading(false);
@@ -52,7 +52,7 @@ export default function TemplatesPage() {
       await templatesApi.delete(id);
       toast.success('Template deleted');
       loadTemplates();
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete template');
     }
   };
@@ -62,7 +62,7 @@ export default function TemplatesPage() {
       await templatesApi.duplicate(id);
       toast.success('Template duplicated');
       loadTemplates();
-    } catch (error) {
+    } catch {
       toast.error('Failed to duplicate template');
     }
   };

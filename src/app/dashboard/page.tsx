@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Header from '@/components/layout/Header';
 import Card, { CardContent, CardHeader } from '@/components/ui/Card';
@@ -342,7 +343,7 @@ export default function DashboardPage() {
               <p className="text-sm text-slate-400">Get started quickly</p>
             </CardHeader>
             <CardContent className="space-y-3">
-              <a
+              <Link
                 href="/campaigns/new"
                 className="flex items-center gap-4 p-4 rounded-lg bg-gradient-to-r from-[#5B8C51]/10 to-[#47703f]/10 border border-[#5B8C51]/20 hover:border-[#5B8C51]/40 transition-colors group"
               >
@@ -353,8 +354,8 @@ export default function DashboardPage() {
                   <p className="font-medium text-white">Create Campaign</p>
                   <p className="text-sm text-slate-400">Start a new email campaign</p>
                 </div>
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/templates/new"
                 className="flex items-center gap-4 p-4 rounded-lg bg-slate-800/30 border border-slate-700/50 hover:border-slate-600/50 transition-colors group"
               >
@@ -365,8 +366,8 @@ export default function DashboardPage() {
                   <p className="font-medium text-white">New Template</p>
                   <p className="text-sm text-slate-400">Design an email template</p>
                 </div>
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/csv-files"
                 className="flex items-center gap-4 p-4 rounded-lg bg-slate-800/30 border border-slate-700/50 hover:border-slate-600/50 transition-colors group"
               >
@@ -377,7 +378,7 @@ export default function DashboardPage() {
                   <p className="font-medium text-white">Upload Contacts</p>
                   <p className="text-sm text-slate-400">Import a CSV file</p>
                 </div>
-              </a>
+              </Link>
             </CardContent>
           </Card>
         </div>

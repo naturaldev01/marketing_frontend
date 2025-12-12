@@ -154,7 +154,7 @@ export default function NewTemplatePage() {
       
       toast.success('Şablon başarıyla oluşturuldu');
       router.push('/templates');
-    } catch (error) {
+    } catch {
       toast.error('Şablon oluşturulamadı');
     } finally {
       setLoading(false);

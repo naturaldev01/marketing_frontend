@@ -5,7 +5,6 @@ import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Header from '@/components/layout/Header';
 import Card, { CardContent, CardHeader } from '@/components/ui/Card';
-import Badge from '@/components/ui/Badge';
 import { reportsApi, campaignsApi } from '@/lib/api';
 import type { Campaign, DashboardStats } from '@/types';
 import {
@@ -17,7 +16,6 @@ import {
   MousePointer,
   AlertTriangle,
   ArrowRight,
-  Activity,
 } from 'lucide-react';
 import {
   BarChart,
@@ -38,7 +36,7 @@ const COLORS = ['#5B8C51', '#0ea5e9', '#8b5cf6', '#f59e0b', '#f43f5e'];
 export default function ReportsPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     loadData();
