@@ -21,6 +21,7 @@ import {
   TrendingUp,
   TrendingDown,
   Minus,
+  UserMinus,
 } from 'lucide-react';
 import {
   AreaChart,
@@ -122,8 +123,9 @@ export default function DashboardPage() {
     { label: 'Total Sent', value: stats?.emails.sent || 0, icon: Mail, bgColor: 'bg-slate-500/10', iconColor: 'text-slate-400' },
     { label: 'Delivered', value: stats?.emails.delivered || 0, icon: CheckCircle, bgColor: 'bg-[#5B8C51]/10', iconColor: 'text-[#7ba373]' },
     { label: 'Opened', value: stats?.emails.opened || 0, icon: Eye, bgColor: 'bg-sky-500/10', iconColor: 'text-sky-400' },
-    { label: 'Clicked', value: stats?.emails.clicked || 0, icon: MousePointer, bgColor: 'bg-violet-500/10', iconColor: 'text-violet-400' },
+    { label: 'Clicked (CTA)', value: stats?.emails.clicked || 0, icon: MousePointer, bgColor: 'bg-violet-500/10', iconColor: 'text-violet-400' },
     { label: 'Bounced', value: stats?.emails.bounced || 0, icon: AlertTriangle, bgColor: 'bg-rose-500/10', iconColor: 'text-rose-400' },
+    { label: 'Unsubscribed', value: stats?.emails.unsubscribed || 0, icon: UserMinus, bgColor: 'bg-amber-500/10', iconColor: 'text-amber-400' },
   ];
 
   return (

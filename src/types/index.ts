@@ -96,6 +96,7 @@ export interface CampaignStats {
   clicked: number;
   bounced: number;
   failed: number;
+  unsubscribed: number;
 }
 
 export interface CampaignEmail {
@@ -150,6 +151,7 @@ export interface DashboardStats {
     clicked: number;
     bounced: number;
     failed: number;
+    unsubscribed: number;
   };
   weeklyChanges?: {
     campaigns: number;

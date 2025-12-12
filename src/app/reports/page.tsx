@@ -16,6 +16,7 @@ import {
   MousePointer,
   AlertTriangle,
   ArrowRight,
+  UserMinus,
 } from 'lucide-react';
 import {
   BarChart,
@@ -31,7 +32,7 @@ import {
 } from 'recharts';
 import { format } from 'date-fns';
 
-const COLORS = ['#5B8C51', '#0ea5e9', '#8b5cf6', '#f59e0b', '#f43f5e'];
+const COLORS = ['#5B8C51', '#0ea5e9', '#8b5cf6', '#f59e0b', '#f43f5e', '#6b7280'];
 
 export default function ReportsPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -63,6 +64,7 @@ export default function ReportsPage() {
         { name: 'Opened', value: stats.emails.opened },
         { name: 'Clicked', value: stats.emails.clicked },
         { name: 'Bounced', value: stats.emails.bounced },
+        { name: 'Unsubscribed', value: stats.emails.unsubscribed || 0 },
         { name: 'Failed', value: stats.emails.failed },
       ].filter((d) => d.value > 0)
     : [];
@@ -88,7 +90,7 @@ export default function ReportsPage() {
 
       <div className="p-6 space-y-6">
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <Card>
             <CardContent className="py-5">
               <div className="flex items-center justify-between">
@@ -133,7 +135,7 @@ export default function ReportsPage() {
             <CardContent className="py-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-400 mb-1">Click Rate</p>
+                  <p className="text-sm text-slate-400 mb-1">Click Rate (CTA)</p>
                   <p className="text-3xl font-bold text-white">
                     {stats ? calculateRate(stats.emails.clicked, stats.emails.opened) : '-'}%
                   </p>
@@ -164,6 +166,26 @@ export default function ReportsPage() {
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center">
                   <AlertTriangle className="w-6 h-6 text-rose-400" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="py-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-400 mb-1">Unsubscribe Rate</p>
+                  <p className="text-3xl font-bold text-white">
+                    {stats ? calculateRate(stats.emails.unsubscribed || 0, stats.emails.sent) : '-'}%
+                  </p>
+                  <div className="flex items-center gap-1 mt-2">
+                    <TrendingDown className="w-3 h-3 text-[#7ba373]" />
+                    <span className="text-xs text-[#7ba373]">-0.2%</span>
+                  </div>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                  <UserMinus className="w-6 h-6 text-amber-400" />
                 </div>
               </div>
             </CardContent>
@@ -281,15 +303,16 @@ export default function ReportsPage() {
                     <th className="text-center py-3 px-4 text-sm font-medium text-slate-400">Sent</th>
                     <th className="text-center py-3 px-4 text-sm font-medium text-slate-400">Delivered</th>
                     <th className="text-center py-3 px-4 text-sm font-medium text-slate-400">Opened</th>
-                    <th className="text-center py-3 px-4 text-sm font-medium text-slate-400">Clicked</th>
+                    <th className="text-center py-3 px-4 text-sm font-medium text-slate-400">Clicked (CTA)</th>
                     <th className="text-center py-3 px-4 text-sm font-medium text-slate-400">Bounced</th>
+                    <th className="text-center py-3 px-4 text-sm font-medium text-slate-400">Unsubscribed</th>
                     <th className="text-right py-3 px-6 text-sm font-medium text-slate-400">Date</th>
                   </tr>
                 </thead>
                 <tbody>
                   {campaigns.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-slate-500">
+                      <td colSpan={8} className="py-8 text-center text-slate-500">
                         No sent campaigns yet
                       </td>
                     </tr>
@@ -330,6 +353,9 @@ export default function ReportsPage() {
                         </td>
                         <td className="py-4 px-4 text-center text-rose-400">
                           {campaign.stats.bounced.toLocaleString()}
+                        </td>
+                        <td className="py-4 px-4 text-center text-amber-400">
+                          {(campaign.stats.unsubscribed || 0).toLocaleString()}
                         </td>
                         <td className="py-4 px-6 text-right text-slate-500 text-sm">
                           {campaign.completed_at

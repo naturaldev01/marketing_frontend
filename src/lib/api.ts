@@ -262,3 +262,15 @@ export const reportsApi = {
   exportCampaignReport: (id: string) => fetchWithAuth(`/api/reports/campaigns/${id}/export`),
 };
 
+// Brevo API
+export const brevoApi = {
+  getWebhookLogs: (params?: { limit?: string; eventType?: string }) =>
+    fetchWithAuth('/api/brevo/webhooks/logs', { params }),
+  getUnsubscribeStats: (campaignId?: string) =>
+    fetchWithAuth('/api/brevo/unsubscribes', { params: campaignId ? { campaignId } : undefined }),
+  getUnsubscribeList: (params?: { page?: string; limit?: string; campaignId?: string }) =>
+    fetchWithAuth('/api/brevo/unsubscribes/list', { params }),
+  checkUnsubscribed: (email: string) =>
+    fetchWithAuth(`/api/brevo/unsubscribes/check/${encodeURIComponent(email)}`),
+};
+
