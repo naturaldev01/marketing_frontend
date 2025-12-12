@@ -171,19 +171,19 @@ export default function CsvFilesPage() {
                         </Badge>
                         {file.filter_criteria && (
                           <div className="mt-2 text-xs text-slate-500 space-y-1">
-                            {file.filter_criteria.countries?.length > 0 && (
+                            {(file.filter_criteria.countries?.length ?? 0) > 0 && (
                               <div className="flex items-center gap-1">
                                 <Globe className="w-3 h-3" />
                                 <span>Ülkeler: {file.filter_criteria.countries.join(', ')}</span>
                               </div>
                             )}
-                            {file.filter_criteria.timezones?.length > 0 && (
+                            {(file.filter_criteria.timezones?.length ?? 0) > 0 && (
                               <div className="flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 <span>Zaman Dilimleri: {file.filter_criteria.timezones.length} seçili</span>
                               </div>
                             )}
-                            {file.filter_criteria.emailDomains?.length > 0 && (
+                            {(file.filter_criteria.emailDomains?.length ?? 0) > 0 && (
                               <div className="flex items-center gap-1">
                                 <span>E-posta: @{file.filter_criteria.emailDomains.slice(0, 2).join(', @')}{file.filter_criteria.emailDomains.length > 2 ? '...' : ''}</span>
                               </div>
