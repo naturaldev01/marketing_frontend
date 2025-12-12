@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Header from '@/components/layout/Header';
@@ -43,11 +43,7 @@ export default function CampaignsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
-  useEffect(() => {
-    loadCampaigns();
-  }, [statusFilter]);
-
-  const loadCampaigns = async () => {
+  const loadCampaigns = useCallback(async () => {
     try {
       setLoading(true);
       const data = await campaignsApi.getAll({
@@ -61,7 +57,11 @@ export default function CampaignsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
+
+  useEffect(() => {
+    loadCampaigns();
+  }, [loadCampaigns]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this campaign?')) return;
@@ -70,7 +70,7 @@ export default function CampaignsPage() {
       await campaignsApi.delete(id);
       toast.success('Campaign deleted');
       loadCampaigns();
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete campaign');
     }
   };
@@ -90,7 +90,7 @@ export default function CampaignsPage() {
       await campaignsApi.pause(id);
       toast.success('Campaign paused');
       loadCampaigns();
-    } catch (error) {
+    } catch {
       toast.error('Failed to pause campaign');
     }
   };
@@ -102,7 +102,7 @@ export default function CampaignsPage() {
       await campaignsApi.cancel(id);
       toast.success('Campaign cancelled');
       loadCampaigns();
-    } catch (error) {
+    } catch {
       toast.error('Failed to cancel campaign');
     }
   };
@@ -112,7 +112,7 @@ export default function CampaignsPage() {
       await campaignsApi.duplicate(id);
       toast.success('Campaign duplicated');
       loadCampaigns();
-    } catch (error) {
+    } catch {
       toast.error('Failed to duplicate campaign');
     }
   };

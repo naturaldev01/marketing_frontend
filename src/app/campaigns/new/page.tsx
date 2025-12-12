@@ -180,7 +180,7 @@ export default function NewCampaignPage() {
 
       toast.success('Kampanya başarıyla oluşturuldu');
       router.push('/campaigns');
-    } catch (error) {
+    } catch {
       toast.error('Kampanya oluşturulamadı');
     } finally {
       setLoading(false);

@@ -68,7 +68,7 @@ export default function CampaignDetailPage() {
     try {
       const data = await campaignsApi.getOne(campaignId);
       setCampaign(data);
-    } catch (error) {
+    } catch {
       toast.error('Kampanya yüklenemedi');
       router.push('/campaigns');
     } finally {
@@ -143,7 +143,7 @@ export default function CampaignDetailPage() {
       await campaignsApi.pause(campaignId);
       toast.success('Kampanya duraklatıldı');
       await loadCampaign();
-    } catch (error) {
+    } catch {
       toast.error('Kampanya duraklatılamadı');
     } finally {
       setActionLoading(false);
@@ -158,7 +158,7 @@ export default function CampaignDetailPage() {
       await campaignsApi.cancel(campaignId);
       toast.success('Kampanya iptal edildi');
       await loadCampaign();
-    } catch (error) {
+    } catch {
       toast.error('Kampanya iptal edilemedi');
     } finally {
       setActionLoading(false);
