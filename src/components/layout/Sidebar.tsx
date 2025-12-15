@@ -10,12 +10,14 @@ import {
   Upload,
   BarChart3,
   LogOut,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Templates', href: '/templates', icon: FileText },
+  { name: 'Images', href: '/images', icon: ImageIcon },
   { name: 'Campaigns', href: '/campaigns', icon: Send },
   { name: 'CSV Files', href: '/csv-files', icon: Upload },
   { name: 'Reports', href: '/reports', icon: BarChart3 },

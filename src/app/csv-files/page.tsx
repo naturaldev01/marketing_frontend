@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Header from '@/components/layout/Header';
 import Card, { CardContent } from '@/components/ui/Card';
@@ -23,6 +24,7 @@ import {
   AlertCircle,
   Loader2,
   X,
+  Eye,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -34,6 +36,7 @@ const statusConfig: Record<string, { label: string; variant: 'default' | 'succes
 };
 
 export default function CsvFilesPage() {
+  const router = useRouter();
   const [files, setFiles] = useState<CsvFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -199,6 +202,16 @@ export default function CsvFilesPage() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
+                      {file.status === 'ready' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => router.push(`/csv-files/${file.id}`)}
+                          icon={<Eye className="w-4 h-4" />}
+                        >
+                          Görüntüle
+                        </Button>
+                      )}
                       {file.status === 'ready' && !file.is_filtered && (
                         <Button
                           variant="outline"

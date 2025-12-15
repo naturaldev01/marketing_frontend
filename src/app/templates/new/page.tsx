@@ -19,6 +19,8 @@ import {
   Type,
   FileText,
   RefreshCw,
+  PenTool,
+  Image as ImageIcon,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -94,10 +96,13 @@ const generateEmailHtml = (data: {
 </html>`;
 };
 
+type EditorMode = 'visual' | 'html';
+
 export default function NewTemplatePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'editor' | 'html' | 'preview'>('editor');
+  const [editorMode, setEditorMode] = useState<EditorMode>('visual');
+  const [activePreview, setActivePreview] = useState<'preview' | 'code'>('preview');
   
   const [formData, setFormData] = useState({
     name: '',
@@ -108,21 +113,38 @@ export default function NewTemplatePage() {
   });
   
   const [generatedHtml, setGeneratedHtml] = useState('');
+  const [customHtml, setCustomHtml] = useState('');
 
-  // Generate HTML when form data changes
+  // Generate HTML when form data changes (only in visual mode)
   const updateHtml = useCallback(() => {
-    const html = generateEmailHtml({
-      subject: formData.subject,
-      bodyText: formData.bodyText,
-      ctaText: formData.ctaText,
-      ctaLink: formData.ctaLink,
-    });
-    setGeneratedHtml(html);
-  }, [formData.subject, formData.bodyText, formData.ctaText, formData.ctaLink]);
+    if (editorMode === 'visual') {
+      const html = generateEmailHtml({
+        subject: formData.subject,
+        bodyText: formData.bodyText,
+        ctaText: formData.ctaText,
+        ctaLink: formData.ctaLink,
+      });
+      setGeneratedHtml(html);
+    }
+  }, [formData.subject, formData.bodyText, formData.ctaText, formData.ctaLink, editorMode]);
 
   useEffect(() => {
     updateHtml();
   }, [updateHtml]);
+
+  // Switch between visual and HTML mode
+  const handleModeSwitch = (mode: EditorMode) => {
+    if (mode === 'html' && editorMode === 'visual') {
+      // Switching from visual to HTML - copy generated HTML to custom
+      setCustomHtml(generatedHtml);
+    }
+    setEditorMode(mode);
+  };
+
+  // Get the HTML to use (either generated or custom)
+  const getFinalHtml = () => {
+    return editorMode === 'html' ? customHtml : generatedHtml;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,18 +158,24 @@ export default function NewTemplatePage() {
       return;
     }
     
+    const finalHtml = getFinalHtml();
+    if (!finalHtml.trim()) {
+      toast.error('E-posta içeriği gerekli');
+      return;
+    }
+    
     setLoading(true);
 
     try {
       // Extract variables from the template
-      const variableMatches = generatedHtml.match(/\{\{(\w+)\}\}/g) || [];
+      const variableMatches = finalHtml.match(/\{\{(\w+)\}\}/g) || [];
       const variables = [...new Set(variableMatches.map(v => v.replace(/\{\{|\}\}/g, '')))];
 
       await templatesApi.create({
         name: formData.name,
         subject: formData.subject,
-        bodyHtml: generatedHtml,
-        bodyText: formData.bodyText,
+        bodyHtml: finalHtml,
+        bodyText: editorMode === 'visual' ? formData.bodyText : stripHtml(finalHtml),
         variables,
         isActive: true,
       });
@@ -159,6 +187,16 @@ export default function NewTemplatePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Simple HTML to text converter
+  const stripHtml = (html: string) => {
+    return html
+      .replace(/<style[^>]*>.*?<\/style>/gi, '')
+      .replace(/<script[^>]*>.*?<\/script>/gi, '')
+      .replace(/<[^>]+>/g, '\n')
+      .replace(/\n\s*\n/g, '\n\n')
+      .trim();
   };
 
   return (
@@ -181,9 +219,45 @@ export default function NewTemplatePage() {
       />
 
       <div className="p-6">
+        {/* Editor Mode Toggle */}
+        <div className="mb-6 flex items-center gap-4">
+          <span className="text-sm text-slate-400">Editör Modu:</span>
+          <div className="flex rounded-lg bg-slate-800/50 p-1">
+            <button
+              type="button"
+              onClick={() => handleModeSwitch('visual')}
+              className={`
+                flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors
+                ${editorMode === 'visual' 
+                  ? 'bg-[#5B8C51] text-white' 
+                  : 'text-slate-400 hover:text-white'
+                }
+              `}
+            >
+              <PenTool className="w-4 h-4" />
+              Görsel Editör
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeSwitch('html')}
+              className={`
+                flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors
+                ${editorMode === 'html' 
+                  ? 'bg-[#5B8C51] text-white' 
+                  : 'text-slate-400 hover:text-white'
+                }
+              `}
+            >
+              <Code className="w-4 h-4" />
+              HTML Editör
+            </button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Sol Panel - Form */}
           <div className="space-y-6">
+            {/* Temel Bilgiler - Her iki modda da göster */}
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
@@ -201,7 +275,7 @@ export default function NewTemplatePage() {
                 />
                 <Input
                   label="Konu Başlığı"
-                  placeholder="ör: {{firstName}}, Natural Clinic'e Hoş Geldiniz!"
+                  placeholder="ör: {{first_name}}, Natural Clinic'e Hoş Geldiniz!"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                   icon={<Sparkles className="w-4 h-4" />}
@@ -209,17 +283,20 @@ export default function NewTemplatePage() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Type className="w-5 h-5 text-sky-400" />
-                  <h3 className="text-lg font-semibold text-white">E-posta İçeriği</h3>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Textarea
-                  label="Gövde Metni"
-                  placeholder={`Merhaba {{firstName}},
+            {/* Görsel Editör Modu */}
+            {editorMode === 'visual' && (
+              <>
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <Type className="w-5 h-5 text-sky-400" />
+                      <h3 className="text-lg font-semibold text-white">E-posta İçeriği</h3>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Textarea
+                      label="Gövde Metni"
+                      placeholder={`Merhaba {{first_name}},
 
 Natural Clinic ailesine hoş geldiniz! Sizinle tanıştığımız için çok mutluyuz.
 
@@ -227,39 +304,91 @@ Sağlıklı ve güzel bir yaşam için buradayız. Sorularınız için bize ula�
 
 Sevgilerle,
 Natural Clinic Ekibi`}
-                  rows={10}
-                  value={formData.bodyText}
-                  onChange={(e) => setFormData({ ...formData, bodyText: e.target.value })}
-                />
-                <p className="text-xs text-slate-400">
-                  💡 Değişkenler için {`{{firstName}}`}, {`{{lastName}}`}, {`{{email}}`} gibi formatları kullanın
-                </p>
-              </CardContent>
-            </Card>
+                      rows={10}
+                      value={formData.bodyText}
+                      onChange={(e) => setFormData({ ...formData, bodyText: e.target.value })}
+                    />
+                    <p className="text-xs text-slate-400">
+                      💡 Değişkenler için {`{{first_name}}`}, {`{{last_name}}`}, {`{{email}}`} gibi formatları kullanın
+                    </p>
+                  </CardContent>
+                </Card>
 
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <LinkIcon className="w-5 h-5 text-violet-400" />
-                  <h3 className="text-lg font-semibold text-white">CTA (Eylem Çağrısı)</h3>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Input
-                  label="CTA Metni"
-                  placeholder="ör: Randevu Al"
-                  value={formData.ctaText}
-                  onChange={(e) => setFormData({ ...formData, ctaText: e.target.value })}
-                />
-                <Input
-                  label="CTA Linki"
-                  placeholder="ör: https://natural.clinic/randevu"
-                  value={formData.ctaLink}
-                  onChange={(e) => setFormData({ ...formData, ctaLink: e.target.value })}
-                  icon={<LinkIcon className="w-4 h-4" />}
-                />
-              </CardContent>
-            </Card>
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <LinkIcon className="w-5 h-5 text-violet-400" />
+                      <h3 className="text-lg font-semibold text-white">CTA (Eylem Çağrısı)</h3>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Input
+                      label="CTA Metni"
+                      placeholder="ör: Randevu Al"
+                      value={formData.ctaText}
+                      onChange={(e) => setFormData({ ...formData, ctaText: e.target.value })}
+                    />
+                    <Input
+                      label="CTA Linki"
+                      placeholder="ör: https://natural.clinic/randevu"
+                      value={formData.ctaLink}
+                      onChange={(e) => setFormData({ ...formData, ctaLink: e.target.value })}
+                      icon={<LinkIcon className="w-4 h-4" />}
+                    />
+                  </CardContent>
+                </Card>
+              </>
+            )}
+
+            {/* HTML Editör Modu */}
+            {editorMode === 'html' && (
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Code className="w-5 h-5 text-amber-400" />
+                      <h3 className="text-lg font-semibold text-white">HTML Kodu</h3>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(customHtml);
+                          toast.success('HTML kopyalandı');
+                        }}
+                        className="text-xs text-slate-400 hover:text-white transition-colors"
+                      >
+                        Kopyala
+                      </button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="bg-slate-900/50 rounded-lg border border-slate-700/50 overflow-hidden">
+                      <textarea
+                        value={customHtml}
+                        onChange={(e) => setCustomHtml(e.target.value)}
+                        className="w-full h-[500px] p-4 bg-transparent text-slate-300 font-mono text-sm resize-none focus:outline-none"
+                        placeholder="HTML kodunuzu buraya yapıştırın veya yazın..."
+                        spellCheck={false}
+                      />
+                    </div>
+                    <div className="p-3 bg-slate-800/30 rounded-lg border border-slate-700/30">
+                      <p className="text-xs text-slate-400 mb-2">
+                        <strong className="text-slate-300">💡 İpuçları:</strong>
+                      </p>
+                      <ul className="text-xs text-slate-400 space-y-1 list-disc list-inside">
+                        <li>Değişkenler için: {`{{first_name}}`}, {`{{last_name}}`}, {`{{email}}`}</li>
+                        <li>Unsubscribe linki için: {`{{unsubscribe_link}}`}</li>
+                        <li>Görseller için Supabase Storage URL'lerini kullanın</li>
+                        <li>Email için inline CSS kullanın (harici CSS desteklenmez)</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Sağ Panel - Önizleme */}
@@ -267,46 +396,48 @@ Natural Clinic Ekibi`}
             {/* Tab Buttons */}
             <div className="flex gap-2">
               <Button
-                variant={activeTab === 'editor' ? 'primary' : 'ghost'}
+                variant={activePreview === 'preview' ? 'primary' : 'ghost'}
                 size="sm"
-                onClick={() => setActiveTab('editor')}
+                onClick={() => setActivePreview('preview')}
               >
                 <Eye className="w-4 h-4 mr-2" />
                 Canlı Önizleme
               </Button>
               <Button
-                variant={activeTab === 'html' ? 'primary' : 'ghost'}
+                variant={activePreview === 'code' ? 'primary' : 'ghost'}
                 size="sm"
-                onClick={() => setActiveTab('html')}
+                onClick={() => setActivePreview('code')}
               >
                 <Code className="w-4 h-4 mr-2" />
-                HTML Kodu
+                HTML Çıktısı
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={updateHtml}
-              >
-                <RefreshCw className="w-4 h-4" />
-              </Button>
+              {editorMode === 'visual' && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={updateHtml}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </Button>
+              )}
             </div>
 
             {/* Preview/Code Panel */}
             <Card className="h-[calc(100vh-280px)] overflow-hidden">
               <CardHeader>
                 <h3 className="text-lg font-semibold text-white">
-                  {activeTab === 'html' ? 'HTML Çıktısı' : 'E-posta Önizleme'}
+                  {activePreview === 'code' ? 'HTML Çıktısı' : 'E-posta Önizleme'}
                 </h3>
               </CardHeader>
               <CardContent className="h-[calc(100%-60px)] overflow-auto p-0">
-                {activeTab === 'html' ? (
+                {activePreview === 'code' ? (
                   <pre className="p-4 text-xs text-slate-300 font-mono whitespace-pre-wrap break-all">
-                    {generatedHtml}
+                    {getFinalHtml()}
                   </pre>
                 ) : (
                   <div className="bg-slate-200 h-full overflow-auto">
                     <iframe
-                      srcDoc={generatedHtml}
+                      srcDoc={getFinalHtml()}
                       className="w-full h-full border-0"
                       title="Email Preview"
                       sandbox=""

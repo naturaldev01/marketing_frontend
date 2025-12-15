@@ -274,3 +274,34 @@ export const brevoApi = {
     fetchWithAuth(`/api/brevo/unsubscribes/check/${encodeURIComponent(email)}`),
 };
 
+// Images API
+export const imagesApi = {
+  upload: async (file: File) => {
+    const token = await refreshTokenIfNeeded();
+    
+    if (!token) {
+      throw new Error('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.');
+    }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await fetch(`${API_URL}/api/images/upload`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Görsel yüklenemedi' }));
+      throw new Error(error.message || 'Görsel yüklenemedi');
+    }
+    
+    return response.json();
+  },
+  getAll: () => fetchWithAuth('/api/images'),
+  delete: (filename: string) => fetchWithAuth(`/api/images/${filename}`, { method: 'DELETE' }),
+};
+
