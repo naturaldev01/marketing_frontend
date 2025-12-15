@@ -339,10 +339,12 @@ export default function CsvDetailPage() {
                               Geçerli
                             </Badge>
                           ) : (
-                            <Badge variant="danger" size="sm" title={contact.validation_error || ''}>
-                              <XCircle className="w-3 h-3 mr-1" />
-                              Geçersiz
-                            </Badge>
+                            <span title={contact.validation_error || ''}>
+                              <Badge variant="danger" size="sm">
+                                <XCircle className="w-3 h-3 mr-1" />
+                                Geçersiz
+                              </Badge>
+                            </span>
                           )}
                         </td>
                       </tr>
@@ -386,4 +388,5 @@ export default function CsvDetailPage() {
     </DashboardLayout>
   );
 }
+
 

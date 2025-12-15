@@ -20,7 +20,6 @@ import {
   FileText,
   RefreshCw,
   PenTool,
-  Image as ImageIcon,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
