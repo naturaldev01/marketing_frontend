@@ -19,6 +19,7 @@ const PLATFORMS = [
   'TikTok',
   'YouTube',
   'Email',
+  'SMS',
   'QR Code',
   'Print',
   'Other',
