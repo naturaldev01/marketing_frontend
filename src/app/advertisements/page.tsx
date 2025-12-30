@@ -69,7 +69,7 @@ export default function AdvertisementsPage() {
   };
 
   const copyTrackingLink = (trackingCode: string, adId: string) => {
-    const link = `${API_URL}/api/go/${trackingCode}`;
+    const link = `${API_URL}/api/g/${trackingCode}`;
     navigator.clipboard.writeText(link);
     setCopiedId(adId);
     setTimeout(() => setCopiedId(null), 2000);
@@ -222,7 +222,7 @@ export default function AdvertisementsPage() {
                     {/* Tracking Link */}
                     <div className="flex items-center gap-2 mb-3">
                       <code className="text-xs bg-slate-900/50 px-3 py-1.5 rounded-lg text-[#7ba373] font-mono truncate max-w-md">
-                        {API_URL}/api/go/{ad.tracking_code}
+                        {API_URL}/api/g/{ad.tracking_code}
                       </code>
                       <Button
                         size="sm"

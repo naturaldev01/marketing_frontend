@@ -78,7 +78,7 @@ export default function AdvertisementDetailPage({ params }: { params: Promise<{ 
 
   const copyTrackingLink = () => {
     if (!stats) return;
-    const link = `${API_URL}/api/go/${stats.advertisement.tracking_code}`;
+    const link = `${API_URL}/api/g/${stats.advertisement.tracking_code}`;
     navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -197,7 +197,7 @@ export default function AdvertisementDetailPage({ params }: { params: Promise<{ 
             <div className="flex-1">
               <p className="text-sm text-slate-400 mb-1">Tracking Link</p>
               <code className="text-[#7ba373] font-mono">
-                {API_URL}/api/go/{advertisement.tracking_code}
+                {API_URL}/api/g/{advertisement.tracking_code}
               </code>
             </div>
             <div className="flex items-center gap-2">
