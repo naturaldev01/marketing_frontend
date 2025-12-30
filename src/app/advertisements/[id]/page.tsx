@@ -58,7 +58,7 @@ export default function AdvertisementDetailPage({ params }: { params: Promise<{ 
   const [copied, setCopied] = useState(false);
   const [selectedDays, setSelectedDays] = useState(30);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const TRACKING_URL = process.env.NEXT_PUBLIC_TRACKING_URL || 'https://go.natural.clinic';
 
   useEffect(() => {
     loadStats();
@@ -78,7 +78,7 @@ export default function AdvertisementDetailPage({ params }: { params: Promise<{ 
 
   const copyTrackingLink = () => {
     if (!stats) return;
-    const link = `${API_URL}/api/g/${stats.advertisement.tracking_code}`;
+    const link = `${TRACKING_URL}/${stats.advertisement.tracking_code}`;
     navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -197,7 +197,7 @@ export default function AdvertisementDetailPage({ params }: { params: Promise<{ 
             <div className="flex-1">
               <p className="text-sm text-slate-400 mb-1">Tracking Link</p>
               <code className="text-[#7ba373] font-mono">
-                {API_URL}/api/g/{advertisement.tracking_code}
+                {TRACKING_URL}/{advertisement.tracking_code}
               </code>
             </div>
             <div className="flex items-center gap-2">
