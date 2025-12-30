@@ -305,3 +305,32 @@ export const imagesApi = {
   delete: (filename: string) => fetchWithAuth(`/api/images/${filename}`, { method: 'DELETE' }),
 };
 
+// Advertisements API
+export const advertisementsApi = {
+  getAll: () => fetchWithAuth('/api/advertisements'),
+  getOne: (id: string) => fetchWithAuth(`/api/advertisements/${id}`),
+  create: (data: {
+    name: string;
+    description?: string;
+    destination_url: string;
+    platform?: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+  }) => fetchWithAuth('/api/advertisements', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id: string, data: Partial<{
+    name: string;
+    description?: string;
+    destination_url: string;
+    platform?: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    is_active?: boolean;
+  }>) => fetchWithAuth(`/api/advertisements/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id: string) => fetchWithAuth(`/api/advertisements/${id}`, { method: 'DELETE' }),
+  getStats: (id: string, days?: number) =>
+    fetchWithAuth(`/api/advertisements/${id}/stats`, { params: days ? { days: days.toString() } : undefined }),
+  getDashboardStats: () => fetchWithAuth('/api/advertisements/dashboard-stats'),
+};
+

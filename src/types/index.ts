@@ -174,3 +174,73 @@ export interface Pagination {
   totalPages: number;
 }
 
+// Advertisement Types
+export interface Advertisement {
+  id: string;
+  name: string;
+  description: string | null;
+  destination_url: string;
+  tracking_code: string;
+  platform: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  is_active: boolean;
+  stats: AdStats;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdStats {
+  clicks: number;
+  unique_clicks: number;
+}
+
+export interface AdClick {
+  id: string;
+  advertisement_id: string;
+  ip_address: string | null;
+  user_agent: string | null;
+  referrer: string | null;
+  country: string | null;
+  city: string | null;
+  device_type: string | null;
+  browser: string | null;
+  os: string | null;
+  clicked_at: string;
+}
+
+export interface AdDailyStats {
+  date: string;
+  count: number;
+}
+
+export interface AdBreakdown {
+  name: string;
+  count: number;
+}
+
+export interface AdDetailedStats {
+  advertisement: Advertisement;
+  dailyStats: AdDailyStats[];
+  deviceBreakdown: AdBreakdown[];
+  browserBreakdown: AdBreakdown[];
+  osBreakdown: AdBreakdown[];
+  hourlyDistribution: { hour: number; count: number }[];
+  totalClicks: number;
+  periodDays: number;
+}
+
+export interface AdDashboardStats {
+  totalAds: number;
+  activeAds: number;
+  totalClicks: number;
+  topAds: {
+    id: string;
+    name: string;
+    stats: AdStats;
+    platform: string | null;
+  }[];
+}
+
