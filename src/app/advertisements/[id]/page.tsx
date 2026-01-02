@@ -18,6 +18,7 @@ import {
   ToggleLeft,
   ToggleRight,
 } from 'lucide-react';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
@@ -101,30 +102,34 @@ export default function AdvertisementDetailPage({ params }: { params: Promise<{ 
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-slate-700 rounded-lg animate-pulse" />
-          <div className="h-8 w-64 bg-slate-700 rounded animate-pulse" />
+      <DashboardLayout>
+        <div className="p-6 space-y-6">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-slate-700 rounded-lg animate-pulse" />
+            <div className="h-8 w-64 bg-slate-700 rounded animate-pulse" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map(i => (
+              <Card key={i} className="bg-slate-800/50 border-slate-700/50 animate-pulse">
+                <CardContent className="p-6 h-24" />
+              </Card>
+            ))}
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
-            <Card key={i} className="bg-slate-800/50 border-slate-700/50 animate-pulse">
-              <CardContent className="p-6 h-24" />
-            </Card>
-          ))}
-        </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   if (!stats) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-xl text-white mb-2">Advertisement not found</h2>
-        <Link href="/advertisements">
-          <Button variant="outline">Back to Advertisements</Button>
-        </Link>
-      </div>
+      <DashboardLayout>
+        <div className="p-6 text-center py-12">
+          <h2 className="text-xl text-white mb-2">Advertisement not found</h2>
+          <Link href="/advertisements">
+            <Button variant="outline">Back to Advertisements</Button>
+          </Link>
+        </div>
+      </DashboardLayout>
     );
   }
 
@@ -141,7 +146,8 @@ export default function AdvertisementDetailPage({ params }: { params: Promise<{ 
   }));
 
   return (
-    <div className="space-y-6">
+    <DashboardLayout>
+      <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -526,7 +532,8 @@ export default function AdvertisementDetailPage({ params }: { params: Promise<{ 
           </CardContent>
         </Card>
       )}
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
 

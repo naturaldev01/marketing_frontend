@@ -15,6 +15,8 @@ import {
   Users,
   Megaphone,
 } from 'lucide-react';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import Header from '@/components/layout/Header';
 import Card, { CardContent } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -86,21 +88,21 @@ export default function AdvertisementsPage() {
   const activeAds = advertisements.filter(ad => ad.is_active).length;
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Advertisements</h1>
-          <p className="text-slate-400 mt-1">Track your advertisement link clicks</p>
-        </div>
-        <Link href="/advertisements/new">
-          <Button className="bg-gradient-to-r from-[#5B8C51] to-[#47703f] hover:from-[#4a7a42] hover:to-[#3d6035]">
-            <Plus className="w-4 h-4 mr-2" />
-            New Advertisement
-          </Button>
-        </Link>
-      </div>
+    <DashboardLayout>
+      <Header
+        title="Advertisements"
+        subtitle="Track your advertisement link clicks"
+        action={
+          <Link href="/advertisements/new">
+            <Button className="bg-gradient-to-r from-[#5B8C51] to-[#47703f] hover:from-[#4a7a42] hover:to-[#3d6035]">
+              <Plus className="w-4 h-4 mr-2" />
+              New Advertisement
+            </Button>
+          </Link>
+        }
+      />
 
+      <div className="p-6 space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-slate-800/50 border-slate-700/50">
@@ -294,7 +296,8 @@ export default function AdvertisementsPage() {
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
 

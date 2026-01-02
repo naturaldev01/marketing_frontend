@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save, Megaphone, Link2, Tag, Globe } from 'lucide-react';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -101,19 +102,21 @@ export default function NewAdvertisementPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href="/advertisements">
-          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white p-2">
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-white">Create New Advertisement</h1>
-          <p className="text-slate-400">Create a trackable link for your advertisement</p>
-        </div>
-      </div>
+    <DashboardLayout>
+      <div className="p-6">
+        <div className="max-w-3xl mx-auto space-y-6">
+          {/* Header */}
+          <div className="flex items-center gap-4">
+            <Link href="/advertisements">
+              <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white p-2">
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Create New Advertisement</h1>
+              <p className="text-slate-400">Create a trackable link for your advertisement</p>
+            </div>
+          </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -319,7 +322,9 @@ export default function NewAdvertisementPage() {
           </Button>
         </div>
       </form>
-    </div>
+        </div>
+      </div>
+    </DashboardLayout>
   );
 }
 

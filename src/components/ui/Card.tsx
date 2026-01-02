@@ -51,4 +51,3 @@ export function CardTitle({ children, className = '' }: { children: React.ReactN
     </h3>
   );
 }
-
